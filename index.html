@@ -7,12 +7,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Budget">
+<meta name="color-scheme" content="dark">
 <title>Budget Mensuel</title>
 <style>
 /* ==============================================
-   VARIABLES CSS - double tirets corriges
+   VARIABLES CSS
    ============================================== */
 :root {
+  color-scheme: dark;
   --bg:     #0c0c0c;
   --s1:     #161616;
   --s2:     #1e1e1e;
@@ -34,20 +36,38 @@
 }
 
 /* ==============================================
-RESET
+RESET - theme sombre force
 ============================================== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; }
+html {
+height: 100%;
+background: #0c0c0c !important;
+color-scheme: dark;
+}
 body {
 font-family: -apple-system, ‘Helvetica Neue’, sans-serif;
-background: var(–bg);
-color: var(–txt);
+background: #0c0c0c !important;
+background-color: #0c0c0c !important;
+color: #ebebdf !important;
 font-size: 14px;
 overscroll-behavior: none;
 -webkit-font-smoothing: antialiased;
+min-height: 100%;
+}
+/* Forcer tous les inputs et selects en sombre */
+input, select, textarea {
+background-color: #272727 !important;
+color: #ebebdf !important;
+border-color: #2c2c2c !important;
+-webkit-text-fill-color: #ebebdf !important;
+}
+/* Empecher Safari de blanchir les champs au focus */
+input:focus, select:focus, textarea:focus {
+background-color: #272727 !important;
+-webkit-text-fill-color: #ebebdf !important;
 }
 input, select, button, textarea { font-family: inherit; }
-button { cursor: pointer; }
+button { cursor: pointer; background: none; }
 
 /* ==============================================
 HEADER
@@ -136,10 +156,14 @@ border-radius: 12px; padding: 12px 14px;
 .sc-sub { font-size: 10px; color: var(–mut); margin-top: 4px; }
 .sc-input {
 font-size: 21px; font-weight: 700; font-variant-numeric: tabular-nums;
-background: none; border: none; outline: none;
-color: var(–acc2); width: 100%; margin-top: 2px;
+background: none !important; border: none !important; outline: none;
+color: var(–acc2) !important; -webkit-text-fill-color: var(–acc2) !important;
+width: 100%; margin-top: 2px; padding: 0;
 }
-.sc-input:focus { background: var(–s3); border-radius: 6px; padding: 2px 6px; }
+.sc-input:focus {
+background: var(–s3) !important; border-radius: 6px; padding: 2px 6px;
+color: var(–acc2) !important; -webkit-text-fill-color: var(–acc2) !important;
+}
 /* couleurs utilitaires */
 .cg  { color: var(–grn); }
 .cr  { color: var(–red); }
@@ -265,13 +289,13 @@ display: inline-flex; align-items: center; gap: 3px;
 /* Champ montant */
 .row-amt {
 font-size: 14px; font-weight: 700; text-align: right;
-background: none; border: none; outline: none;
+background: none !important; border: none !important; outline: none;
 font-variant-numeric: tabular-nums; flex-shrink: 0;
-width: 80px;
+width: 80px; padding: 0;
 }
-.row-amt:focus { background: var(–s3); border-radius: 6px; padding: 2px 5px; }
-.row-amt.inc { color: var(–grn); }
-.row-amt.exp { color: var(–txt); }
+.row-amt:focus { background: var(–s3) !important; border-radius: 6px; padding: 2px 5px; }
+.row-amt.inc { color: var(–grn) !important; -webkit-text-fill-color: var(–grn) !important; }
+.row-amt.exp { color: var(–txt) !important; -webkit-text-fill-color: var(–txt) !important; }
 
 /* Bouton supprimer */
 .row-del {
