@@ -107,6 +107,16 @@ text-transform: uppercase; letter-spacing: 0.7px;
 transition: color .15s, border-color .15s;
 }
 .mtab.active { color: var(–acc); border-bottom-color: var(–acc); }
+/* Mois calendaire actuel - petit point indicateur */
+.mtab.active-month { position: relative; }
+.mtab.active-month::after {
+content: ‘’;
+position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%);
+width: 4px; height: 4px; border-radius: 50%;
+background: var(–acc); opacity: 0.6;
+}
+/* active ET active-month : le point est plus visible */
+.mtab.active.active-month::after { opacity: 1; bottom: 3px; }
 
 /* =========================================
 NAVIGATION BAS
@@ -153,7 +163,7 @@ text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
 /* =========================================
 CARTES SOLDE (DASHBOARD)
 ========================================= */
-.solde-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.solde-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 0; }
 .solde-card {
 background: var(–c2); border: 1px solid var(–c3);
 border-radius: 14px; padding: 14px 15px;
@@ -534,7 +544,6 @@ UTILITAIRES
      ========================================== -->
 
 <div class="page active" id="page-dashboard">
-  <div id="heroBox"></div>
   <div class="solde-grid" id="soldeGrid"></div>
   <div class="prog-card" id="progBox"></div>
   <div id="alertBox"></div>
@@ -1015,8 +1024,12 @@ function renderCurrent() {
    ONGLETS MOIS
    ============================================ */
 function renderTabs() {
+  var nowMonth = new Date().getMonth();
   document.getElementById('mtabs').innerHTML = MS.map(function(m, i) {
-    return '<button class="mtab' + (i === cm ? ' active' : '') + '" onclick="switchMonth(' + i + ')">' + m + '</button>';
+    var cls = 'mtab';
+    if (i === cm)        cls += ' active';
+    if (i === nowMonth)  cls += ' active-month';
+    return '<button class="' + cls + '" onclick="switchMonth(' + i + ')">' + m + '</button>';
   }).join('');
 
   /* Date du jour */
@@ -1045,24 +1058,15 @@ function renderDash() {
   var pC  = T.proj >= 0 ? 'cg' : 'cr';
   var m   = app.months[cm];
 
-  /* HERO - solde actuel en gros */
-  document.getElementById('heroBox').innerHTML =
-    '<div class="solde-hero">' +
-      '<div class="sh-lbl">Solde actuel</div>' +
-      '<div class="sh-val ' + lC + '">' + fShort(T.live) + '</div>' +
-      '<div class="sh-sub">Revenus encaisses moins depenses payees</div>' +
-      '<div class="sh-badge" style="background:' + pbC + '1a;color:' + pbC + '">' +
-        Math.round(pct) + '% depense' +
-      '</div>' +
-    '</div>';
-
-  /* MINI CARTES */
+  /* CARTES SOLDE - sans solde actuel */
+  /* Couleur revenus : vert si tout percu, orange sinon */
+  var revCls = T.pendIn === 0 ? 'cg' : 'co';
+  var nPaidIn = m.income.filter(function(r){return r.paid;}).length;
   document.getElementById('soldeGrid').innerHTML =
-    sc('Solde fin de mois', '<span class="' + pC + '">' + fShort(T.proj) + '</span>', 'Revenus - Depenses') +
-    sc('A encaisser',       '<span class="cy">' + fShort(T.pendIn) + '</span>', 'Revenus non percus') +
-    sc('A payer',           '<span class="cr">-' + fShort(T.pendEx) + '</span>', 'Depenses en attente') +
-    sc('Revenus totaux',    '<span class="cg">' + fShort(T.tIn) + '</span>',
-       m.income.filter(function(r){return r.paid;}).length + '/' + m.income.length + ' percus');
+    sc('Solde fin de mois',      '<span class="' + pC + '">' + fShort(T.proj) + '</span>', 'Revenus prevus - Depenses') +
+    sc('Restant a recevoir',     '<span class="' + revCls + '">' + fShort(T.pendIn) + '</span>', nPaidIn + '/' + m.income.length + ' percus') +
+    sc('A payer',                '<span class="cr">-' + fShort(T.pendEx) + '</span>', 'Depenses non reglees') +
+    sc('Revenus prevus',         '<span class="cg">' + fShort(T.tIn) + '</span>', 'Total revenus du mois');
 
   /* BARRES */
   document.getElementById('progBox').innerHTML =
@@ -1205,7 +1209,7 @@ function bRow(r, i, sec) {
   }
   if (r.dueDate && !r.paid) {
     var tc = late ? 'tr' : soon ? 'ty' : '';
-    var tl = late ? 'Retard ' + Math.abs(d) + 'j' : d === 0 ? 'Auj.' : 'J-' + d;
+    var tl = late ? '⚠️ Retard ' + Math.abs(d) + 'j' : d === 0 ? '⏰ Auj.' : '📅 J-' + d;
     tags += '<span class="rtag ' + tc + '">' + tl + '</span>';
   }
   if (r.paid && r.paidDate) {
@@ -1467,21 +1471,32 @@ function doReset() {
   save(); renderCurrent(); showToast('Mois reinitialise');
 }
 
-/* DUPLICATION - copie TOUTES les depenses, payees ou non, sans filtrage */
+/* Recalcule dueDate pour le mois cible (garde le jour, ajuste si invalide) */
+function shiftDateMonth(dateStr, targetMonth) {
+  if (!dateStr) return '';
+  var parts = dateStr.split('-');
+  if (parts.length !== 3) return '';
+  var srcMonth = parseInt(parts[1], 10) - 1;
+  var year     = parseInt(parts[0], 10);
+  var day      = parseInt(parts[2], 10);
+  /* Incrementer l'annee si on passe de decembre a janvier */
+  if (targetMonth === 0 && srcMonth === 11) year += 1;
+  /* Dernier jour valide du mois cible */
+  var lastDay = new Date(year, targetMonth + 1, 0).getDate();
+  return year + '-' + p2(targetMonth + 1) + '-' + p2(Math.min(day, lastDay));
+}
+
+/* DUPLICATION - copie TOUTES les depenses, recalcule les dates pour le mois suivant */
 function doDuplicate() {
   var next = (cm + 1) % 12;
   var src  = app.months[cm].expenses;
-
   if (!src.length) { showToast('Aucune depense a dupliquer'); return; }
-
-  if (!confirm('Copier les ' + src.length + ' depense(s) de ' + ML[cm] +
-      ' vers ' + ML[next] + ' ?\n(Remplace les depenses existantes du mois suivant)')) return;
-
-  /* Copie exacte : meme nom, montant, categorie, date - paid reini a false */
+  if (!confirm('Copier ' + src.length + ' depense(s) de ' + ML[cm] +
+      ' vers ' + ML[next] + ' ?\nLes dates sont recalculees automatiquement.')) return;
+  /* Copie : meme nom/montant/categorie, date recalculee, paid=false, paidDate vide */
   app.months[next].expenses = src.map(function(r) {
-    return mkRow(r.name, r.amount, r.dueDate, r.cat);
+    return mkRow(r.name, r.amount, shiftDateMonth(r.dueDate, next), r.cat);
   });
-
   save(); showToast(src.length + ' depense(s) copiees vers ' + ML[next]);
 }
 
