@@ -16,25 +16,34 @@
 :root {
   color-scheme: dark;
   --bg:    #080808;
-  --c1:    #101010;
-  --c2:    #161616;
-  --c3:    #1e1e1e;
-  --c4:    #282828;
-  --c5:    #343434;
+  --c1:    #0e0e0e;
+  --c2:    #141414;
+  --c3:    #1c1c1c;
+  --c4:    #262626;
+  --c5:    #323232;
   --c6:    #404040;
-  --txt:   #f0f0e8;
-  --sub:   #909088;
+  --txt:   #f2f2f0;
+  --sub:   #8a8a82;
   --dim:   #484840;
   --acc:   #a0d836;
-  --grn:   #30a85e;
-  --red:   #d83838;
-  --org:   #d87020;
-  --ylw:   #ccaa20;
-  --blu:   #3898d0;
-  --grn-d: #061610;
-  --red-d: #200606;
-  --ylw-d: #201800;
-  --org-d: #201000;
+  /* Couleurs semantiques */
+  --grn:   #2eb866;     /* revenus, positif */
+  --grn2:  #1a7a42;
+  --red:   #d63030;     /* depenses, negatif */
+  --red2:  #8a1e1e;
+  --org:   #d07020;     /* orange moyen */
+  --ylw:   #c8a820;
+  --blu:   #2880d0;     /* revenus / salaire */
+  --blu2:  #1a4e8a;
+  --pur:   #7040d0;     /* projection */
+  --pur2:  #3a1e7a;
+  /* Fonds colores */
+  --grn-d: #051410;
+  --red-d: #1c0404;
+  --ylw-d: #1c1400;
+  --org-d: #1c0e00;
+  --blu-d: #06101c;
+  --pur-d: #0e0820;
 }
 
 /* =========================================
@@ -161,45 +170,227 @@ text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
 }
 
 /* =========================================
-CARTES SOLDE (DASHBOARD)
+DASHBOARD - NOUVELLES CARTES PREMIUM
 ========================================= */
-.solde-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 0; }
-.solde-card {
-background: var(–c2); border: 1px solid var(–c3);
-border-radius: 14px; padding: 14px 15px;
-}
-.solde-card.full { grid-column: span 2; }
-.sc-lbl {
-font-size: 11px; font-weight: 600; color: var(–dim);
-text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;
-}
-.sc-val {
-font-size: 22px; font-weight: 700;
-font-variant-numeric: tabular-nums; line-height: 1.1;
-}
-.sc-sub { font-size: 11px; color: var(–dim); margin-top: 4px; }
 
-/* Solde principal - grande carte hero */
-.solde-hero {
-background: linear-gradient(145deg, #101808 0%, #101010 100%);
-border: 1px solid #202c14;
-border-radius: 16px; padding: 18px 16px 16px;
+/* — CARTE SOLDE ACTUEL (grande, verte) — */
+.dash-solde-card {
+background: linear-gradient(135deg, #0c2018 0%, #0a1a12 60%, #0c0c0c 100%);
+border: 1px solid #1e4030;
+border-radius: 18px; padding: 20px 18px 18px;
+position: relative; overflow: hidden;
 }
-.sh-lbl {
-font-size: 11px; font-weight: 700; color: var(–dim);
-text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+.dash-solde-card::before {
+content: ‘’;
+position: absolute; top: -30px; right: -30px;
+width: 120px; height: 120px; border-radius: 50%;
+background: radial-gradient(circle, rgba(46,184,102,.18) 0%, transparent 70%);
+pointer-events: none;
 }
-.sh-val {
-font-size: 36px; font-weight: 700;
+.dsc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.dsc-icon {
+width: 42px; height: 42px; border-radius: 50%;
+background: linear-gradient(135deg, #2eb866, #1a7a42);
+display: flex; align-items: center; justify-content: center;
+font-size: 20px; flex-shrink: 0;
+}
+.dsc-badge {
+display: flex; align-items: center; gap: 6px;
+background: rgba(46,184,102,.12); border: 1px solid rgba(46,184,102,.25);
+border-radius: 20px; padding: 5px 12px;
+font-size: 11px; font-weight: 700; color: var(–grn);
+}
+.dsc-lbl {
+font-size: 12px; font-weight: 700; color: var(–grn);
+text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
+}
+.dsc-val {
+font-size: 42px; font-weight: 800;
 font-variant-numeric: tabular-nums; line-height: 1;
-margin-bottom: 6px;
+color: #fff; margin-bottom: 8px; letter-spacing: -1px;
 }
-.sh-sub { font-size: 12px; color: var(–sub); }
-.sh-badge {
-float: right; margin-top: -46px;
-padding: 5px 12px; border-radius: 20px;
-font-size: 12px; font-weight: 700;
+.dsc-val.neg { color: var(–red); }
+.dsc-sub { font-size: 12px; color: rgba(255,255,255,.4); }
+
+/* — GRILLE 2 CARTES (salaire + a payer) — */
+.dash-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Carte generique dashboard */
+.dash-card {
+border-radius: 16px; padding: 16px 15px;
+position: relative; overflow: hidden;
 }
+.dc-icon {
+width: 38px; height: 38px; border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 18px; flex-shrink: 0; margin-bottom: 12px;
+}
+.dc-lbl {
+font-size: 11px; font-weight: 700;
+text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px;
+opacity: .7;
+}
+.dc-val {
+font-size: 24px; font-weight: 800;
+font-variant-numeric: tabular-nums; line-height: 1.1;
+letter-spacing: -0.5px;
+}
+.dc-sub { font-size: 11px; margin-top: 6px; opacity: .55; line-height: 1.4; }
+.dc-foot {
+margin-top: 10px; padding-top: 10px;
+border-top: 1px solid rgba(255,255,255,.08);
+font-size: 11px; opacity: .6;
+display: flex; align-items: center; gap: 5px;
+}
+
+/* Variante bleue (salaire) */
+.dash-card-blu {
+background: linear-gradient(135deg, #0a1828 0%, #0e1e30 100%);
+border: 1px solid #1a3a5a;
+color: var(–txt);
+}
+.dash-card-blu .dc-icon { background: linear-gradient(135deg, #2880d0, #1a4e8a); }
+.dash-card-blu .dc-lbl { color: #5aa8f0; }
+.dash-card-blu .dc-val { color: #5aa8f0; }
+
+/* Variante rouge (a payer) */
+.dash-card-red {
+background: linear-gradient(135deg, #1a0808 0%, #1e0c0c 100%);
+border: 1px solid #3a1a1a;
+color: var(–txt);
+}
+.dash-card-red .dc-icon { background: linear-gradient(135deg, #d63030, #8a1e1e); }
+.dash-card-red .dc-lbl { color: #e86060; }
+.dash-card-red .dc-val { color: #e86060; }
+
+/* — CARTE SOLDE FINAL (violette, pleine largeur) — */
+.dash-final-card {
+background: linear-gradient(135deg, #120820 0%, #0e0c1e 100%);
+border: 1px solid #2a1a4a;
+border-radius: 18px; padding: 18px 18px 16px;
+display: flex; align-items: center; gap: 16px;
+position: relative; overflow: hidden;
+}
+.dash-final-card::after {
+content: ‘’;
+position: absolute; bottom: -20px; right: -20px;
+width: 100px; height: 100px; border-radius: 50%;
+background: radial-gradient(circle, rgba(112,64,208,.2) 0%, transparent 70%);
+pointer-events: none;
+}
+.dfc-left { flex: 1; min-width: 0; }
+.dfc-icon {
+width: 52px; height: 52px; border-radius: 50%;
+background: rgba(112,64,208,.2); border: 2px solid rgba(112,64,208,.4);
+display: flex; align-items: center; justify-content: center;
+font-size: 24px; flex-shrink: 0;
+}
+.dfc-lbl {
+font-size: 11px; font-weight: 700; color: #9070e0;
+text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;
+}
+.dfc-val {
+font-size: 34px; font-weight: 800;
+font-variant-numeric: tabular-nums; line-height: 1;
+letter-spacing: -1px; color: #fff; margin-bottom: 5px;
+}
+.dfc-val.neg { color: var(–red); }
+.dfc-sub { font-size: 12px; color: rgba(255,255,255,.35); line-height: 1.4; }
+
+/* Anneau circulaire */
+.ring-wrap { flex-shrink: 0; }
+.ring-svg { display: block; }
+
+/* — BARRE UTILISATION SALAIRE — */
+.dash-usage {
+background: var(–c2); border: 1px solid var(–c3);
+border-radius: 16px; padding: 16px 16px 14px;
+}
+.du-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.du-lbl { font-size: 13px; font-weight: 700; color: var(–sub); text-transform: uppercase; letter-spacing: 0.8px; }
+.du-pct { font-size: 22px; font-weight: 800; }
+.du-bar-bg {
+width: 100%; height: 10px; background: var(–c4);
+border-radius: 5px; overflow: hidden; margin: 10px 0 8px;
+}
+.du-bar-fill { height: 100%; border-radius: 5px; transition: width .6s ease; }
+.du-legend {
+display: flex; justify-content: space-between;
+font-size: 11px; color: var(–sub);
+}
+.du-legend-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.du-tip {
+margin-top: 10px; padding: 9px 12px;
+background: rgba(255,255,255,.04); border-radius: 10px;
+font-size: 12px; color: var(–sub);
+display: flex; align-items: center; gap: 8px;
+}
+
+/* — ALERTES PREMIUM (2 colonnes) — */
+.alert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.alert-ttl-row {
+display: flex; align-items: center;
+font-size: 12px; font-weight: 800; letter-spacing: 1px;
+text-transform: uppercase; margin-bottom: 8px;
+color: var(–org);
+}
+.alert-ttl-row::before { content: ‘’; display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: var(–org); margin-right: 8px; }
+.alert-card {
+border-radius: 12px; padding: 12px;
+display: flex; flex-direction: column; gap: 6px;
+border: 1px solid transparent;
+}
+.alert-card-ico { font-size: 22px; }
+.alert-card-ttl { font-size: 12px; font-weight: 700; line-height: 1.3; }
+.alert-card-txt { font-size: 11px; opacity: .75; line-height: 1.4; }
+.ac-warn  { background: rgba(208,112,32,.12); border-color: rgba(208,112,32,.3); color: var(–org); }
+.ac-tip   { background: rgba(112,64,208,.12); border-color: rgba(112,64,208,.3); color: #a080f0; }
+.ac-danger{ background: rgba(214,48,48,.12);  border-color: rgba(214,48,48,.3);  color: var(–red); }
+.ac-good  { background: rgba(46,184,102,.1);  border-color: rgba(46,184,102,.25);color: var(–grn); }
+
+/* — PROCHAINS PRELEVEMENTS — */
+.prel-header {
+font-size: 13px; font-weight: 800; letter-spacing: 0.8px;
+text-transform: uppercase; color: var(–txt);
+margin-bottom: 10px; padding: 0 2px;
+}
+.prel-list { display: flex; flex-direction: column; gap: 8px; }
+.prel-item {
+display: flex; align-items: center; gap: 12px;
+background: var(–c2); border: 1px solid var(–c3);
+border-radius: 14px; padding: 13px 14px;
+cursor: pointer; transition: background .1s;
+}
+.prel-item:active { background: var(–c3); }
+.prel-ico-wrap {
+width: 40px; height: 40px; border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 18px; flex-shrink: 0;
+}
+.prel-ico-red { background: rgba(214,48,48,.2); }
+.prel-ico-org { background: rgba(208,112,32,.2); }
+.prel-ico-ylw { background: rgba(200,168,32,.2); }
+.prel-ico-grn { background: rgba(46,184,102,.15); }
+.prel-info { flex: 1; min-width: 0; }
+.prel-name { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prel-date-row { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+.prel-date { font-size: 12px; font-weight: 600; }
+.prel-date.late { color: var(–red); }
+.prel-date.soon { color: var(–org); }
+.prel-date.today { color: var(–ylw); }
+.prel-date.ok    { color: var(–sub); }
+.prel-sub { font-size: 11px; color: var(–sub); }
+.prel-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+.prel-amt { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(–txt); }
+.prel-badge {
+font-size: 10px; font-weight: 700; padding: 2px 8px;
+border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.pb-retard  { background: rgba(214,48,48,.2);  color: var(–red); }
+.pb-bientot { background: rgba(208,112,32,.2); color: var(–org); }
+.pb-aujour  { background: rgba(200,168,32,.2); color: var(–ylw); }
+.pb-ok      { background: rgba(46,184,102,.15);color: var(–grn); }
+.prel-arrow { color: var(–dim); font-size: 14px; }
 
 /* =========================================
 BARRE PROGRESSION
@@ -544,10 +735,18 @@ UTILITAIRES
      ========================================== -->
 
 <div class="page active" id="page-dashboard">
-  <div class="solde-grid" id="soldeGrid"></div>
-  <div class="prog-card" id="progBox"></div>
+  <!-- 1. Solde actuel -->
+  <div id="dscBox"></div>
+  <!-- 2. Salaire + A payer -->
+  <div class="dash-duo" id="duoBox"></div>
+  <!-- 3. Solde final -->
+  <div id="dfcBox"></div>
+  <!-- 4. Utilisation salaire -->
+  <div id="usageBox"></div>
+  <!-- 5. Alertes -->
   <div id="alertBox"></div>
-  <div id="ucBox"></div>
+  <!-- 6. Prochains prelevements -->
+  <div id="prelBox"></div>
 </div>
 
 <!-- ==========================================
@@ -625,7 +824,7 @@ UTILITAIRES
     <div class="sg-item" style="cursor:default">
       <span class="sg-ico">ℹ️</span>
       <div class="sg-info">
-        <div class="sg-lbl">Budget Mensuel v4</div>
+        <div class="sg-lbl">Budget Mensuel v5</div>
         <div class="sg-desc">Donnees locales - aucun envoi sur internet</div>
       </div>
     </div>
@@ -1048,107 +1247,256 @@ function renderTabs() {
 }
 
 /* ============================================
-   TABLEAU DE BORD
+   TABLEAU DE BORD PREMIUM
    ============================================ */
 function renderDash() {
-  var T   = compute(cm);
-  var pct = Math.min(200, T.pct);
-  var pbC = pct < 70 ? '#30a85e' : pct < 90 ? '#ccaa20' : '#d83838';
-  var lC  = T.live >= 0 ? 'cg' : 'cr';
-  var pC  = T.proj >= 0 ? 'cg' : 'cr';
   var m   = app.months[cm];
+  var now = new Date(); now.setHours(0,0,0,0);
+  var todayS = todayStr();
 
-  /* CARTES SOLDE - sans solde actuel */
-  /* Couleur revenus : vert si tout percu, orange sinon */
-  var revCls = T.pendIn === 0 ? 'cg' : 'co';
-  var nPaidIn = m.income.filter(function(r){return r.paid;}).length;
-  document.getElementById('soldeGrid').innerHTML =
-    sc('Solde fin de mois',      '<span class="' + pC + '">' + fShort(T.proj) + '</span>', 'Revenus prevus - Depenses') +
-    sc('Restant a recevoir',     '<span class="' + revCls + '">' + fShort(T.pendIn) + '</span>', nPaidIn + '/' + m.income.length + ' percus') +
-    sc('A payer',                '<span class="cr">-' + fShort(T.pendEx) + '</span>', 'Depenses non reglees') +
-    sc('Revenus prevus',         '<span class="cg">' + fShort(T.tIn) + '</span>', 'Total revenus du mois');
+  /* --- CALCULS DATE-AWARE ---
+     soldeActuel : inclut uniquement les ops dont dueDate <= aujourd'hui
+     aPayer      : depenses dont dueDate > aujourd'hui (futures)
+     salaire     : tous les revenus du mois (prevus)
+     soldeFinal  : salaire - (toutes depenses)
+  */
+  var soldeActuel = 0;
+  var salaire     = 0;
+  var aPayer      = 0; /* depenses futures non payees */
+  var depTotal    = 0;
 
-  /* BARRES */
-  document.getElementById('progBox').innerHTML =
-    '<div class="prog-hdr">' +
-      '<span class="prog-lbl">Repartition du mois</span>' +
-      '<span class="prog-pct" style="color:' + pbC + '">' + Math.round(pct) + '%</span>' +
-    '</div>' +
-    '<div class="prog-rows">' +
-      pr('Revenus',      T.tIn,  100,               '#30a85e', 'cg') +
-      pr('Depenses',     T.tEx,  Math.min(100,pct),  pbC,      'cr') +
-      pr('Fin de mois',  T.proj, Math.max(0,100-pct),'#3898d0', pC) +
+  /* Revenus : inclure si date <= aujourd'hui OU pas de date */
+  for (var i = 0; i < m.income.length; i++) {
+    var r = m.income[i];
+    var v = parseFloat(r.amount) || 0;
+    salaire += v; /* total revenus */
+    var rDate = r.dueDate ? new Date(r.dueDate) : null;
+    if (rDate) rDate.setHours(0,0,0,0);
+    if (!rDate || rDate <= now) {
+      if (r.paid) soldeActuel += v; /* percu */
+    }
+  }
+
+  /* Depenses */
+  for (var j = 0; j < m.expenses.length; j++) {
+    var e = m.expenses[j];
+    var w = parseFloat(e.amount) || 0;
+    depTotal += w;
+    var eDate = e.dueDate ? new Date(e.dueDate) : null;
+    if (eDate) eDate.setHours(0,0,0,0);
+    var isFuture = eDate && eDate > now;
+    if (isFuture && !e.paid) {
+      aPayer += w;
+    }
+    if (!isFuture || e.paid) {
+      /* depense passee ou deja payee : impact sur solde actuel */
+      if (e.paid) soldeActuel -= w;
+    }
+  }
+
+  var soldeFinal = soldeActuel + aPayer * 0 - aPayer + (salaire - m.income.filter(function(r){return r.paid;}).reduce(function(s,r){return s+(parseFloat(r.amount)||0);},0));
+  /* Formule claire : soldeFinal = soldeActuel + revenus_a_venir - depenses_futures */
+  var revAVenir = 0;
+  for (var k = 0; k < m.income.length; k++) {
+    var ri = m.income[k];
+    if (!ri.paid) revAVenir += parseFloat(ri.amount) || 0;
+  }
+  soldeFinal = soldeActuel + revAVenir - aPayer;
+
+  var pct     = salaire > 0 ? Math.min(200, depTotal / salaire * 100) : 0;
+  var pbColor = pct < 70 ? '#2eb866' : pct < 90 ? '#d07020' : '#d63030';
+
+  /* ---- 1. SOLDE ACTUEL ---- */
+  var dscNeg = soldeActuel < 0 ? ' neg' : '';
+  document.getElementById('dscBox').innerHTML =
+    '<div class="dash-solde-card">' +
+      '<div class="dsc-header">' +
+        '<div class="dsc-icon">💰</div>' +
+        '<div class="dsc-badge"><span style="width:7px;height:7px;border-radius:50%;background:var(--grn);display:inline-block"></span>Mis a jour</div>' +
+      '</div>' +
+      '<div class="dsc-lbl">Solde actuel</div>' +
+      '<div class="dsc-val' + dscNeg + '">' + fmtBig(soldeActuel) + '</div>' +
+      '<div class="dsc-sub">Calcule avec les operations jusqu\'a aujourd\'hui (' + dFR(todayS) + ')</div>' +
     '</div>';
 
-  /* ALERTES */
+  /* ---- 2. DUO : SALAIRE + A PAYER ---- */
+  var nextVers = '';
+  for (var ni = 0; ni < m.income.length; ni++) {
+    if (m.income[ni].dueDate) { nextVers = m.income[ni].dueDate; break; }
+  }
+  /* Calculer prochaine date = meme jour mois suivant */
+  var nextVersTxt = '';
+  if (nextVers) {
+    var nv = shiftDateMonth(nextVers, (cm + 1) % 12);
+    nextVersTxt = dFR(nv);
+  }
+  document.getElementById('duoBox').innerHTML =
+    /* SALAIRE */
+    '<div class="dash-card dash-card-blu">' +
+      '<div class="dc-icon">💼</div>' +
+      '<div class="dc-lbl">Salaire (percu)</div>' +
+      '<div class="dc-val">' + fShort(salaire) + '</div>' +
+      '<div class="dc-sub">Montant de tes revenus</div>' +
+      (nextVersTxt ? '<div class="dc-foot">📅 Prochain versement<br><strong style="color:#5aa8f0">' + nextVersTxt + '</strong></div>' : '') +
+    '</div>' +
+    /* A PAYER */
+    '<div class="dash-card dash-card-red">' +
+      '<div class="dc-icon">📋</div>' +
+      '<div class="dc-lbl">A payer</div>' +
+      '<div class="dc-val">' + fShort(aPayer) + '</div>' +
+      '<div class="dc-sub">Restant a payer jusqu\'a la fin du mois</div>' +
+      '<div class="dc-foot" style="color:rgba(255,255,255,.35)">Date > aujourd\'hui</div>' +
+    '</div>';
+
+  /* ---- 3. SOLDE FINAL ---- */
+  var dfcNeg = soldeFinal < 0 ? ' neg' : '';
+  /* Calcul anneau SVG */
+  var ring = buildRing(soldeFinal, salaire, 52);
+  document.getElementById('dfcBox').innerHTML =
+    '<div class="dash-final-card">' +
+      '<div class="dfc-left">' +
+        '<div class="dfc-lbl">Solde une fois tout paye</div>' +
+        '<div class="dfc-val' + dfcNeg + '">' + fmtBig(soldeFinal) + '</div>' +
+        '<div class="dfc-sub">Ce qu\'il te restera une fois toutes les depenses payees d\'ici le ' + lastDayFR(cm) + '</div>' +
+      '</div>' +
+      '<div class="ring-wrap">' + ring + '</div>' +
+    '</div>';
+
+  /* ---- 4. UTILISATION SALAIRE ---- */
+  var pctDisp = Math.round(Math.min(200, pct));
+  var fillW   = Math.min(100, pct);
+  /* Barre degradee : vert -> orange -> rouge */
+  var barGrad = pct < 70 ? '#2eb866' : pct < 90 ? '#d07020' : '#d63030';
+  document.getElementById('usageBox').innerHTML =
+    '<div class="dash-usage">' +
+      '<div class="du-header">' +
+        '<span class="du-lbl">Utilisation du salaire</span>' +
+        '<span class="du-pct" style="color:' + barGrad + '">' + pctDisp + '%</span>' +
+      '</div>' +
+      '<div class="du-bar-bg"><div class="du-bar-fill" style="width:' + fillW + '%;background:linear-gradient(90deg,#2eb866,' + barGrad + ')"></div></div>' +
+      '<div class="du-legend">' +
+        '<span><span class="du-legend-dot" style="background:var(--red)"></span>' + fEur(depTotal) + ' depenses</span>' +
+        '<span>' + fEur(salaire) + ' salaire<span class="du-legend-dot" style="background:var(--grn);margin-left:5px;margin-right:0"></span></span>' +
+      '</div>' +
+      '<div class="du-tip">💡 Tu as utilise ' + pctDisp + '% de ton salaire ce mois-ci.</div>' +
+    '</div>';
+
+  /* ---- 5. ALERTES ---- */
   var als = [];
-  if (T.proj < 0)
-    als.push(['al-danger','🚨','Solde negatif prevu','Fin de mois estimee : ' + fEur(T.proj) + '.']);
-  else if (pct >= 100)
-    als.push(['al-danger','⛔','Depenses superieures aux revenus','Vous depensez plus que vous ne gagnez.']);
-  else if (pct >= 90)
-    als.push(['al-warn','⚠️','Budget tres serre', Math.round(pct) + '% de vos revenus utilises.']);
-  else if (pct >= 80)
-    als.push(['al-warn','🔶','Depenses elevees', Math.round(pct) + '% de vos revenus utilises ce mois.']);
-  else if (T.tIn > 0)
-    als.push(['al-good','✅','Budget equilibre', Math.round(pct) + '% depense. Reste : ' + fEur(T.proj) + '.']);
+  if (soldeFinal < 0) als.push(['ac-danger','🚨','Solde negatif prevu','Ton solde final sera ' + fEur(soldeFinal) + '.']);
+  else if (pct >= 100) als.push(['ac-danger','⛔','Budget depasse','Tu depenses plus que tu ne gagnes.']);
+  else if (pct >= 80)  als.push(['ac-warn','⚠️','Depenses elevees','Tu as utilise ' + pctDisp + '% de ton salaire ce mois-ci.']);
+  else                 als.push(['ac-good','✅','Budget OK','Bonne gestion ! Reste prevu : ' + fEur(soldeFinal) + '.']);
+  var subs = m.expenses.filter(function(r){return r.cat==='abonnements';}).reduce(function(s,r){return s+(parseFloat(r.amount)||0);},0);
+  if (subs > 100) als.push(['ac-tip','📱','Abonnements : ' + fShort(subs),'Verifie les abonnements dont tu n\'as plus l\'utilite.']);
 
-  var subs = m.expenses
-    .filter(function(r) { return r.cat === 'abonnements'; })
-    .reduce(function(s,r) { return s + (parseFloat(r.amount)||0); }, 0);
-  if (subs > 100)
-    als.push(['al-tip','📱','Abonnements eleves','Total : ' + fEur(subs) + '. Verifiez les inutilises.']);
-
-  document.getElementById('alertBox').innerHTML = als.length
-    ? '<div class="alert-box">' + als.map(function(a) {
-        return '<div class="alert ' + a[0] + '">' +
-          '<span class="al-ico">' + a[1] + '</span>' +
-          '<div class="al-body"><div class="al-ttl">' + a[2] + '</div>' +
-          '<div class="al-txt">' + a[3] + '</div></div></div>';
-      }).join('') + '</div>'
-    : '';
-
-  /* PAIEMENTS A VENIR */
-  var uc = [];
-  for (var k = 0; k < m.expenses.length; k++) {
-    if (m.expenses[k].paid || !m.expenses[k].dueDate) continue;
-    var dl = daysLeft(m.expenses[k].dueDate);
-    if (dl !== null && dl <= 7) uc.push({ r: m.expenses[k], d: dl });
-  }
-  uc.sort(function(a, b) { return a.d - b.d; });
-
-  if (uc.length) {
-    document.getElementById('ucBox').innerHTML =
-      '<div class="uc-ttl">A regler bientot</div>' +
-      '<div class="uc-list">' + uc.map(function(u) {
-        var late = u.d < 0, soon = u.d >= 0 && u.d <= 3;
-        var cls  = late ? 'uc-late' : soon ? 'uc-soon' : '';
-        var ico  = late ? '🔴' : soon ? '🟡' : '📅';
-        var lbl  = late ? 'Retard ' + Math.abs(u.d) + 'j' : u.d === 0 ? "Aujourd'hui" : 'Dans ' + u.d + 'j';
-        return '<div class="uc-item ' + cls + '">' +
-          '<span class="uc-ico">' + ico + '</span>' +
-          '<div class="uc-info"><div class="uc-name">' + u.r.name + '</div>' +
-          '<div class="uc-date">' + lbl + ' - ' + dFR(u.r.dueDate) + '</div></div>' +
-          '<div class="uc-amt">' + fEur(u.r.amount) + '</div></div>';
-      }).join('') + '</div>';
+  var alertHtml = '';
+  if (als.length === 1) {
+    alertHtml = '<div class="alert-card ' + als[0][0] + '" style="display:flex;flex-direction:row;align-items:center;gap:12px">' +
+      '<div class="alert-card-ico">' + als[0][1] + '</div>' +
+      '<div><div class="alert-card-ttl">' + als[0][2] + '</div><div class="alert-card-txt">' + als[0][3] + '</div></div></div>';
   } else {
-    document.getElementById('ucBox').innerHTML = '';
+    alertHtml = '<div class="alert-grid">' + als.map(function(a){
+      return '<div class="alert-card ' + a[0] + '">' +
+        '<div class="alert-card-ico">' + a[1] + '</div>' +
+        '<div class="alert-card-ttl">' + a[2] + '</div>' +
+        '<div class="alert-card-txt">' + a[3] + '</div></div>';
+    }).join('') + '</div>';
+  }
+  document.getElementById('alertBox').innerHTML =
+    '<div><div class="alert-ttl-row">Alertes</div>' + alertHtml + '</div>';
+
+  /* ---- 6. PROCHAINS PRELEVEMENTS ---- */
+  var prels = [];
+  for (var pi = 0; pi < m.expenses.length; pi++) {
+    var pe = m.expenses[pi];
+    if (!pe.dueDate) continue;
+    var dl2 = daysLeft(pe.dueDate);
+    if (dl2 !== null) prels.push({ r: pe, d: dl2 });
+  }
+  prels.sort(function(a,b){ return a.d - b.d; });
+  /* Garder max 10 */
+  prels = prels.slice(0, 10);
+
+  if (prels.length) {
+    document.getElementById('prelBox').innerHTML =
+      '<div>' +
+      '<div class="prel-header">Prochains prelevements</div>' +
+      '<div class="prel-list">' +
+        prels.map(function(u) {
+          var d   = u.d;
+          var late  = d < 0;
+          var today = d === 0;
+          var soon  = d > 0 && d <= 5;
+          var ico   = late ? '❗' : today ? '🕐' : soon ? '🕑' : '📅';
+          var icoCls = late ? 'prel-ico-red' : today ? 'prel-ico-ylw' : soon ? 'prel-ico-org' : 'prel-ico-grn';
+          var dateCls = late ? 'late' : today ? 'today' : soon ? 'soon' : 'ok';
+          var dateLabel = dFR(u.r.dueDate);
+          var subLabel  = late ? 'Retard ' + Math.abs(d) + 'j' : today ? "Aujourd\'hui" : 'Dans ' + d + 'j';
+          var badge = late  ? '<span class="prel-badge pb-retard">En retard</span>'
+                    : today ? '<span class="prel-badge pb-aujour">Aujourd\'hui</span>'
+                    : soon  ? '<span class="prel-badge pb-bientot">Bientot</span>'
+                    : '';
+          return '<div class="prel-item">' +
+            '<div class="prel-ico-wrap ' + icoCls + '">' + ico + '</div>' +
+            '<div class="prel-info">' +
+              '<div class="prel-name">' + u.r.name + '</div>' +
+              '<div class="prel-date-row">' +
+                '<span class="prel-date ' + dateCls + '">' + dateLabel + '</span>' +
+                '<span class="prel-sub">' + subLabel + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="prel-right">' +
+              '<span class="prel-amt">' + fEur(u.r.amount) + '</span>' +
+              badge +
+            '</div>' +
+            '<span class="prel-arrow">›</span>' +
+          '</div>';
+        }).join('') +
+      '</div></div>';
+  } else {
+    document.getElementById('prelBox').innerHTML = '';
   }
 }
 
-/* helpers */
-function sc(lbl, val, sub) {
-  return '<div class="solde-card"><div class="sc-lbl">' + lbl + '</div>' +
-    '<div class="sc-val">' + val + '</div>' +
-    '<div class="sc-sub">' + sub + '</div></div>';
+/* helpers dashboard */
+function fmtBig(v) {
+  /* Format gros chiffre : 1 250,00 EUR */
+  var n = parseFloat(v) || 0;
+  var abs = Math.abs(n);
+  var int = Math.floor(abs);
+  var dec = Math.round((abs - int) * 100);
+  var intFmt = int.toLocaleString('fr-FR');
+  return (n < 0 ? '-' : '') + intFmt + ',' + String(dec).padStart(2,'0') + ' EUR';
 }
-function pr(lbl, val, pct, col, cls) {
-  pct = Math.max(0, Math.min(100, pct));
-  return '<div class="prog-row">' +
-    '<span class="prog-rl">' + lbl + '</span>' +
-    '<div class="pb"><div class="pb-f" style="width:' + pct + '%;background:' + col + '"></div></div>' +
-    '<span class="prog-rv ' + cls + '">' + fShort(val) + '</span></div>';
+
+function lastDayFR(month) {
+  var year = new Date().getFullYear();
+  var d = new Date(year, month + 1, 0);
+  return p2(d.getDate()) + '/' + p2(month + 1);
 }
+
+function buildRing(val, max, r) {
+  var size = r * 2 + 10;
+  var cx = size / 2, cy = size / 2;
+  var R = r;
+  var stroke = 6;
+  var pct = max > 0 ? Math.min(1, Math.abs(val) / max) : 0;
+  var circ = 2 * Math.PI * R;
+  var dash = pct * circ;
+  var color = val < 0 ? '#d63030' : '#7040d0';
+  var sign = val >= 0 ? '+' : '-';
+  var label = sign + fShort(Math.abs(val));
+  return '<svg class="ring-svg" width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '">' +
+    '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="rgba(112,64,208,.15)" stroke-width="' + stroke + '"/>' +
+    '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="' + color + '" stroke-width="' + stroke + '"' +
+      ' stroke-dasharray="' + dash.toFixed(1) + ' ' + circ.toFixed(1) + '"' +
+      ' stroke-dashoffset="' + (circ * 0.25).toFixed(1) + '"' +
+      ' stroke-linecap="round" style="transition:stroke-dasharray .6s ease"/>' +
+    '<text x="' + cx + '" y="' + (cy + 4) + '" text-anchor="middle" fill="' + color + '" font-size="11" font-weight="700" font-family="-apple-system,sans-serif">' + label + '</text>' +
+  '</svg>';
+}
+
 
 /* ============================================
    TRANSACTIONS
