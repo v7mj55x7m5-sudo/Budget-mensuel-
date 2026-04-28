@@ -134,7 +134,113 @@ function openIO(text,isImport){document.getElementById('ioTitle').textContent=is
 function doImport(){try{let data=JSON.parse(document.getElementById('ioText').value.trim());if(!data.months)throw new Error('Format invalide');app=data;cm=Number.isInteger(app.currentMonth)?app.currentMonth:new Date().getMonth();for(let i=0;i<12;i++){if(!app.months[i])app.months[i]=defMonth();app.months[i].income=(app.months[i].income||defIncome());app.months[i].expenses=(app.months[i].expenses||defExpenses());app.months[i].income.forEach(fix);app.months[i].expenses.forEach(fix)}save();closeIO();renderTabs();renderCurrent();toast('Données importées')}catch(e){alert('JSON invalide : '+e.message)}}
 function doClear(){if(!confirm('Effacer toutes les données ?'))return;if(!confirm('Confirmation finale ?'))return;['bgt4','budgetV3','budgetV2'].forEach(k=>localStorage.removeItem(k));app=initData();cm=new Date().getMonth();save();renderTabs();renderCurrent();toast('Données effacées')}
 let tt;function toast(msg){let el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),2400)}
-function enableMonthSwipe(){let sx=0,sy=0,st=0;document.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;sx=e.touches[0].clientX;sy=e.touches[0].clientY;st=Date.now()},{passive:true});document.addEventListener('touchend',e=>{let t=e.changedTouches[0];if(!t)return;let dx=t.clientX-sx,dy=t.clientY-sy;if(Date.now()-st>650)return;if(Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.4)return;if(dx<0){switchMonth((cm+1)%12);toast(ML[cm])}else{switchMonth((cm+11)%12);toast(ML[cm])}},{passive:true})}
+/* CORRECTION V6.1 : paiement anticipe + recalcul immediat + swipe mois */
+function dashCalc(){
+  let m=app.months[cm];
+  let now=new Date();
+  now.setHours(0,0,0,0);
+  let solde=0,income=0,exTotal=0,aPayer=0,revFut=0;
+
+  m.income.forEach(r=>{
+    let v=+r.amount||0;
+    income+=v;
+    let d=parseDate(r.dueDate);
+    if(r.paid){
+      solde+=v;
+    }else if(d&&d>now){
+      revFut+=v;
+    }else{
+      solde+=v;
+    }
+  });
+
+  m.expenses.forEach(r=>{
+    let v=+r.amount||0;
+    exTotal+=v;
+    let d=parseDate(r.dueDate);
+    if(r.paid){
+      solde-=v;
+    }else if(d&&d>now){
+      aPayer+=v;
+    }else{
+      solde-=v;
+    }
+  });
+
+  return {solde,income,exTotal,aPayer,revFut,final:solde+revFut-aPayer,pct:income?Math.min(200,exTotal/income*100):0};
+}
+
+function rerenderAfterChange(){
+  save();
+  renderTabs();
+  renderCurrent();
+}
+
+function togglePaid(sec,i){
+  let rows=sec==='income'?app.months[cm].income:app.months[cm].expenses;
+  rows[i].paid=!rows[i].paid;
+  rows[i].paidDate=rows[i].paid?todayStr():'';
+  rerenderAfterChange();
+  toast(rows[i].paid?'Paiement pris en compte':'Paiement annulé');
+}
+
+function changeMonthBySwipe(direction){
+  if(direction==='next'){
+    switchMonth((cm+1)%12);
+  }else{
+    switchMonth((cm+11)%12);
+  }
+  toast(ML[cm]);
+}
+
+function enableMonthSwipe(){
+  let sx=0,sy=0,st=0,tracking=false;
+  const ignore=e=>{
+    const el=e.target;
+    return el.closest('input, textarea, select, button, .modal.open, .tabs');
+  };
+
+  document.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1||ignore(e))return;
+    sx=e.touches[0].clientX;
+    sy=e.touches[0].clientY;
+    st=Date.now();
+    tracking=true;
+  },{passive:true});
+
+  document.addEventListener('touchend',e=>{
+    if(!tracking)return;
+    tracking=false;
+    let t=e.changedTouches[0];
+    if(!t)return;
+    let dx=t.clientX-sx;
+    let dy=t.clientY-sy;
+    if(Date.now()-st>900)return;
+    if(Math.abs(dx)<55)return;
+    if(Math.abs(dx)<Math.abs(dy)*1.2)return;
+    changeMonthBySwipe(dx<0?'next':'prev');
+  },{passive:true});
+
+  let px=0,py=0,pt=0,down=false;
+  document.addEventListener('pointerdown',e=>{
+    if(e.pointerType==='mouse'||ignore(e))return;
+    px=e.clientX;
+    py=e.clientY;
+    pt=Date.now();
+    down=true;
+  });
+  document.addEventListener('pointerup',e=>{
+    if(!down)return;
+    down=false;
+    let dx=e.clientX-px;
+    let dy=e.clientY-py;
+    if(Date.now()-pt>900)return;
+    if(Math.abs(dx)<55)return;
+    if(Math.abs(dx)<Math.abs(dy)*1.2)return;
+    changeMonthBySwipe(dx<0?'next':'prev');
+  });
+}
+
 try{renderTabs();renderCurrent();enableMonthSwipe()}catch(e){document.body.insertAdjacentHTML('beforeend',`<div style="position:fixed;left:12px;right:12px;bottom:120px;background:#3a1111;color:#ffb3b3;padding:12px;border-radius:12px;z-index:9999;font-family:monospace;font-size:12px">Erreur JS : ${e.message}</div>`);console.error(e)}
 </script>
 </body>
